@@ -73,6 +73,154 @@
         font-size: 12px;
         margin-bottom: 10px;
       }
+
+      .controls {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.22);
+        color: var(--text);
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        border-color: rgba(124, 58, 237, 0.7);
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      button.action {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 12px 12px;
+        border-radius: 14px;
+        cursor: pointer;
+        text-align: left;
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+        min-height: 56px;
+      }
+
+      button.action:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(124, 58, 237, 0.45);
+        transform: translateY(-1px);
+      }
+
+      button.action:active {
+        transform: translateY(0);
+      }
+
+      button.action[aria-pressed="true"] {
+        border-color: rgba(124, 58, 237, 0.7);
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.18);
+      }
+
+      .result {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .result h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .result .hint {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .result ul {
+        margin-top: 10px;
+      }
+
+      .result .choice {
+        width: 100%;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+      }
+
+      .result .choice:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(124, 58, 237, 0.45);
+        transform: translateY(-1px);
+      }
+
+      .result .choice:active {
+        transform: translateY(0);
+      }
+
+      .posts {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .post {
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.14);
+      }
+
+      .post h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      .post pre {
+        margin: 0;
+        white-space: pre-wrap;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text);
+      }
+
+      @media (max-width: 720px) {
+        .buttons {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -80,13 +228,343 @@
       <section class="card">
         <div class="badge">Идеи для контента</div>
         <h1>Генератор идей для земельного специалиста</h1>
-        <p>Выберите, что нужно сгенерировать:</p>
-        <ul>
-          <li>Контент-план на неделю</li>
-          <li>3 варианта постов по заданной теме</li>
-          <li>3 идеи сторис на заданную тему</li>
-        </ul>
+        <p>Введите тему (по желанию) и нажмите кнопку.</p>
+
+        <div class="controls">
+          <div class="field">
+            <label for="topic">Тема</label>
+            <input
+              id="topic"
+              type="text"
+              placeholder="Например: межевание, кадастровая стоимость, перераспределение земель"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="buttons" role="group" aria-label="Выбор генерации">
+            <button class="action" type="button" data-action="plan" aria-pressed="false">
+              Контент-план на неделю
+            </button>
+            <button class="action" type="button" data-action="posts" aria-pressed="false">
+              3 варианта постов по заданной теме
+            </button>
+            <button class="action" type="button" data-action="stories" aria-pressed="false">
+              3 идеи сторис на заданную тему
+            </button>
+          </div>
+
+          <div class="result" id="result" aria-live="polite">
+            <h2>Результат</h2>
+            <p class="hint">Нажмите одну из кнопок выше — здесь появится результат.</p>
+          </div>
+        </div>
       </section>
     </main>
+
+    <script>
+      const topicInput = document.getElementById("topic");
+      const resultEl = document.getElementById("result");
+      const buttons = Array.from(document.querySelectorAll("button.action"));
+      let activeAction = null;
+      let selectedPostVariantIndex = null;
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function getTopic() {
+        const raw = (topicInput.value || "").trim();
+        return raw.length ? raw : "земельные вопросы";
+      }
+
+      function setPressed(activeAction) {
+        for (const btn of buttons) {
+          btn.setAttribute("aria-pressed", btn.dataset.action === activeAction ? "true" : "false");
+        }
+      }
+
+      function render(title, items, opts = {}) {
+        const { clickable = false, action = null } = opts;
+        const li = items
+          .map((t, i) => {
+            if (!clickable) return `<li>${escapeHtml(t)}</li>`;
+            return `
+              <li>
+                <button class="choice" type="button" data-result-action="${escapeHtml(action)}" data-variant="${i}">
+                  ${escapeHtml(t)}
+                </button>
+              </li>
+            `;
+          })
+          .join("");
+        resultEl.innerHTML = `
+          <h2>${escapeHtml(title)}</h2>
+          <ul>${li}</ul>
+        `;
+      }
+
+      function generatePlan(topic) {
+        return [
+          `Пн: Разбор термина недели — “${topic}”: что это и кому нужно`,
+          `Вт: Частые ошибки клиентов по теме “${topic}” и как их избежать`,
+          `Ср: Кейc (анонимно): проблема → решение → результат по “${topic}”`,
+          `Чт: Чек-лист: какие документы подготовить для “${topic}”`,
+          `Пт: Миф/факт: 5 утверждений о “${topic}”`,
+          `Сб: Q&A: ответы на 7 популярных вопросов про “${topic}”`,
+          `Вс: Мини-обзор: что изменилось/на что обратить внимание по “${topic}”`,
+        ];
+      }
+
+      function generatePosts(topic) {
+        return [
+          `Пост 1 (польза): “${topic}” простыми словами + 3 ситуации, когда это важно`,
+          `Пост 2 (продающий): Как я помогаю с “${topic}”: этапы, сроки, результат, стоимость (диапазон/от чего зависит)`,
+          `Пост 3 (вовлечение): Тест/опрос: “Что вас больше всего волнует в теме ${topic}?” + варианты ответов`,
+        ];
+      }
+
+      function getTopicPack(topic) {
+        const t = String(topic || "").trim();
+        const key = t.toLowerCase();
+
+        const packs = [
+          {
+            match: (s) => /межеван/.test(s) || /уточнен.*границ/.test(s) || /уточнение границ/.test(s),
+            pack: {
+              label: "межевание (уточнение границ)",
+              what: "уточнение (или установление) границ участка на местности и закрепление этих данных в документах",
+              when: [
+                "перед продажей/покупкой, чтобы снизить риск споров и приостановок",
+                "если на карте границы “кривые”, пересекаются с соседями или не отображаются",
+                "если хотите поставить забор/строить рядом с границей и нужна точность",
+              ],
+              mistakes: [
+                "ориентироваться только на публичную карту и не проверять исходные документы",
+                "не учитывать соседей и согласование — потом появляются споры и жалобы",
+                "начинать стройку/забор без понимания точной линии границы",
+              ],
+              docs: ["документ-основание на участок", "кадастровый номер/адрес", "паспорт собственника/доверенность (если нужно)"],
+              process: [
+                "проверяем исходные данные и историю участка",
+                "готовим план работ и список документов",
+                "согласование границ (при необходимости)",
+                "получаете результат и понятные дальнейшие шаги",
+              ],
+              myths: [
+                { text: "“Если стоит забор — граница точно такая же.”", verdict: "миф", why: "забор может стоять не по юридической границе." },
+                { text: "“Если на карте граница есть — значит всё идеально.”", verdict: "миф", why: "карта показывает сведения, но ошибки/наложения бывают." },
+                { text: "“Межевание нужно только для продажи.”", verdict: "миф", why: "оно важно и для споров, стройки, раздела и спокойствия." },
+              ],
+            },
+          },
+          {
+            match: (s) => /кадастр.*стоим/.test(s) || /оценк/.test(s) && /кадастр/.test(s),
+            pack: {
+              label: "кадастровая стоимость",
+              what: "стоимость, которую государство использует для расчёта налогов и ряда платежей/процедур",
+              when: [
+                "если налог кажется завышенным",
+                "если стоимость сильно выше рыночной",
+                "если планируете оспаривание/пересмотр и хотите понять перспективы",
+              ],
+              mistakes: [
+                "сразу “идти спорить”, не собрав доказательства и не проверив основания",
+                "путать кадастровую и рыночную стоимость (и ожидать одинаковые цифры)",
+                "не учитывать сроки и порядок действий — из-за этого теряются периоды и деньги",
+              ],
+              docs: ["кадастровый номер", "выписка/сведения об объекте", "данные о характеристиках объекта (площадь, назначение и т. п.)"],
+              process: [
+                "проверяем текущие сведения и причину завышения",
+                "оцениваем перспективу (есть ли основания и чем подтверждать)",
+                "формируем пакет и маршрут действий",
+                "сопровождаем до результата",
+              ],
+              myths: [
+                { text: "“Кадастровую стоимость можно снизить всегда.”", verdict: "миф", why: "нужны основания и доказательства." },
+                { text: "“Если рыночная ниже — этого достаточно.”", verdict: "миф", why: "важно, как и чем подтверждать, и в каком порядке." },
+                { text: "“Это быстрый процесс на пару дней.”", verdict: "миф", why: "обычно есть сроки рассмотрения и этапы проверки." },
+              ],
+            },
+          },
+          {
+            match: (s) => /перераспределен/.test(s) || /прирезк/.test(s) || /прирезать/.test(s),
+            pack: {
+              label: "перераспределение земель (прирезка)",
+              what: "изменение границ/площади участка за счёт перераспределения с прилегающими территориями (когда это допускается)",
+              when: [
+                "когда фактическое использование отличается и нужно легализовать конфигурацию",
+                "когда хотите увеличить площадь законным способом",
+                "когда нужно “выровнять” границу или убрать неудобный излом",
+              ],
+              mistakes: [
+                "начинать без проверки ограничений/категории и возможности процедуры",
+                "путать перераспределение с самозахватом — и получать отказы",
+                "не продумать цель и дальнейшие шаги (стройка/сделка/оформление)",
+              ],
+              docs: ["кадастровый номер", "схема/описание желаемой конфигурации (на словах достаточно для старта)", "документ-основание", "паспорт/доверенность"],
+              process: [
+                "проверяем, возможна ли процедура и нет ли ограничений",
+                "описываем целевую конфигурацию и риски",
+                "готовим пакет и маршрут подачи",
+                "сопровождаем до результата",
+              ],
+              myths: [
+                { text: "“Можно просто ‘прирезать’ кусок и потом оформить.”", verdict: "миф", why: "сначала проверка оснований и порядок действий." },
+                { text: "“Если сосед не против — значит можно.”", verdict: "миф", why: "важны требования закона и статусы земли." },
+                { text: "“Это всегда дёшево и быстро.”", verdict: "миф", why: "зависит от исходных данных и маршрута." },
+              ],
+            },
+          },
+        ];
+
+        const found = packs.find((p) => p.match(key))?.pack;
+        if (found) return { ...found, topic: t };
+
+        // Универсальный pack, но всё равно “по теме”, а не просто подстановка слова
+        return {
+          topic: t,
+          label: t,
+          what: `задача по теме “${t}”, где важно, чтобы документы и исходные сведения по объекту были корректны`,
+          when: ["когда планируется сделка или изменение участка", "когда есть споры/риски или непонятные сведения", "когда нужно сделать процесс предсказуемым по срокам"],
+          mistakes: ["начинать без проверки исходных сведений", "ориентироваться на “советы из интернета” вместо вашей ситуации", "подавать документы без логики маршрута и контроля рисков"],
+          docs: ["кадастровый номер (если есть)", "документ-основание", "паспорт/доверенность (по ситуации)"],
+          process: ["разбор цели и исходных данных", "маршрут действий и список документов", "сопровождение до результата"],
+          myths: [
+            { text: "“Можно сделать быстро без подготовки.”", verdict: "миф", why: "подготовка снижает отказы и переделки." },
+            { text: "“Если на карте всё красиво — значит проблем нет.”", verdict: "миф", why: "нужна проверка исходных сведений." },
+            { text: "“Приостановки — это нормально.”", verdict: "миф", why: "чаще это сигнал, что чего-то не хватило на старте." },
+          ],
+        };
+      }
+
+      function generateReadyPosts(topic, variantIndex) {
+        const pack = getTopicPack(topic);
+        const idx = Math.max(0, Math.min(2, Number(variantIndex) || 0));
+
+        const v1 = {
+          title: `Вариант 1 — Польза (${pack.label})`,
+          posts: [
+            `Заголовок: ${pack.topic} простыми словами\n\n${pack.topic} — это ${pack.what}.\n\nКогда это особенно важно:\n- ${pack.when[0]}\n- ${pack.when[1]}\n- ${pack.when[2]}\n\n3 ошибки, из‑за которых люди теряют время:\n- ${pack.mistakes[0]}\n- ${pack.mistakes[1]}\n- ${pack.mistakes[2]}\n\nЕсли хотите — напишите “${pack.topic}” в сообщения. Подскажу, какие первые шаги будут самыми правильными именно для вашего случая.`,
+            `Заголовок: Чек‑лист перед тем, как заниматься темой “${pack.topic}”\n\nЧто сделайте вначале:\n1) Определите цель и сроки.\n2) Проверьте исходные сведения по объекту.\n3) Соберите базовый пакет:\n- ${pack.docs[0]}\n- ${pack.docs[1]}\n- ${pack.docs[2]}\n\nПочему это важно: подготовка почти всегда сокращает количество “переделок” и снижает риск приостановок.\n\nСохраните пост. Если хотите — напишите “чек‑лист ${pack.topic}”, и я уточню, что именно добавить под вашу ситуацию.`,
+            `Заголовок: 7 вопросов, которые стоит задать перед темой “${pack.topic}”\n\n1) Какая цель и какой срок?\n2) Есть ли документы-основания и всё ли в них совпадает?\n3) Есть ли спорные моменты/соседи/пересечения?\n4) Нужно ли менять конфигурацию/характеристики объекта?\n5) Какие риски при подаче документов?\n6) Что будет считаться “готовым результатом”?\n7) Кто принимает решения и кто подписывает?\n\nЕсли ответите на эти вопросы — процесс будет быстрее и предсказуемее.\n\nНапишите “вопрос по ${pack.topic}” и 2–3 строки о ситуации — подскажу ближайший шаг.`,
+          ],
+        };
+
+        const v2 = {
+          title: `Вариант 2 — Продающий (${pack.label})`,
+          posts: [
+            `Заголовок: Как я сопровождаю клиентов по теме “${pack.topic}”\n\nМой подход — без сюрпризов и лишних кругов:\n1) Разбираем цель (что хотите получить) и сроки.\n2) Проверяем исходные данные и типовые риски.\n3) Составляем маршрут действий и список документов.\n4) Делаем работу и сопровождаем до результата.\n\nВ теме “${pack.topic}” чаще всего важно заранее предусмотреть:\n- ${pack.mistakes[0]}\n- ${pack.mistakes[1]}\n\nХотите предварительную оценку — напишите “оценка ${pack.topic}” и укажите: ${pack.docs[1]}.`,
+            `Заголовок: ${pack.topic} “под ключ” — что вы получаете\n\n- понятный план действий и сроки\n- проверку исходных данных (чтобы не ловить отказы)\n- подготовку документов по вашему случаю\n- сопровождение до результата\n\nЕсли вы на этапе “не знаю, с чего начать” — это нормально.\nНапишите “старт ${pack.topic}” и цель (1 строка). Я скажу, какой шаг будет самым логичным.`,
+            `Заголовок: Когда по теме “${pack.topic}” лучше не тянуть\n\n1) Когда планируется сделка.\n2) Когда есть изменения по участку/границам/характеристикам.\n3) Когда есть спор/пересечение/непонятные сведения.\n\nВ этих случаях подготовка и проверка исходных данных экономят недели.\n\nНапишите “${pack.topic}” — подскажу, как быстро понять, есть ли риски именно у вас.`,
+          ],
+        };
+
+        const v3 = {
+          title: `Вариант 3 — Вовлечение (${pack.label})`,
+          posts: [
+            `Заголовок: Тест: готовы ли вы к теме “${pack.topic}”?\n\nОтметьте “да/нет”:\n1) У вас есть ${pack.docs[1]}.\n2) Понимаете цель и желаемый результат.\n3) На руках есть ${pack.docs[0]}.\n4) Понимаете, есть ли спорные моменты или расхождения.\n\nЕсли 2+ “нет” — начните с проверки исходных сведений.\n\nНапишите “тест ${pack.topic}” и цель — я подскажу 3 проверки, которые дадут максимум ясности.`,
+            `Заголовок: Миф или факт про “${pack.topic}”?\n\n1) ${pack.myths[0].text} — ${pack.myths[0].verdict}. ${pack.myths[0].why}\n\n2) ${pack.myths[1].text} — ${pack.myths[1].verdict}. ${pack.myths[1].why}\n\n3) ${pack.myths[2].text} — ${pack.myths[2].verdict}. ${pack.myths[2].why}\n\nПишите в комментариях 1/2/3 — разберу ваш вопрос по теме “${pack.topic}”.`,
+            `Заголовок: Разбор в комментариях по теме “${pack.topic}”\n\nНапишите по шаблону:\n- объект и регион\n- цель (сделка/изменение/спор и т. п.)\n- что уже есть из документов/данных\n\nЯ отвечу и подскажу следующий шаг. Если вопрос личный — можно в сообщения (без персональных данных).`,
+          ],
+        };
+
+        return [v1, v2, v3][idx];
+      }
+
+      function renderReadyPosts(topic, variantIndex) {
+        const variant = generateReadyPosts(topic, variantIndex);
+        const postsHtml = variant.posts
+          .map(
+            (text, i) => `
+              <div class="post">
+                <h3>Готовый пост ${i + 1}</h3>
+                <pre>${escapeHtml(text)}</pre>
+              </div>
+            `
+          )
+          .join("");
+
+        const existing = resultEl.querySelector("ul");
+        const wrapper = document.createElement("div");
+        wrapper.className = "posts";
+        wrapper.innerHTML = postsHtml;
+
+        // Удаляем прошлые “готовые посты”, если они уже были
+        const prev = resultEl.querySelector(".posts");
+        if (prev) prev.remove();
+
+        // Под списком вариантов
+        if (existing) existing.insertAdjacentElement("afterend", wrapper);
+        else resultEl.appendChild(wrapper);
+      }
+
+      function generateStories(topic) {
+        return [
+          `Сторис 1: Опрос “Понимаете ли вы, что такое ${topic}?” → слайд с коротким объяснением`,
+          `Сторис 2: “До/после”: покажите типичный кейс по ${topic} (без персональных данных)`,
+          `Сторис 3: “3 ошибки за 15 секунд”: короткие пункты про ${topic} + призыв написать в директ`,
+        ];
+      }
+
+      function handleAction(action) {
+        const topic = getTopic();
+        activeAction = action;
+        selectedPostVariantIndex = null;
+        setPressed(action);
+
+        if (action === "plan") render("Контент-план на неделю", generatePlan(topic));
+        if (action === "posts")
+          render("3 варианта постов (нажмите на вариант, чтобы получить 3 готовых поста)", generatePosts(topic), {
+            clickable: true,
+            action: "posts",
+          });
+        if (action === "stories") render("3 идеи сторис", generateStories(topic));
+      }
+
+      for (const btn of buttons) {
+        btn.addEventListener("click", () => handleAction(btn.dataset.action));
+      }
+
+      resultEl.addEventListener("click", (e) => {
+        const target = e.target.closest?.("button.choice");
+        if (!target) return;
+
+        const action = target.dataset.resultAction;
+        const variantIndex = target.dataset.variant;
+        const topic = getTopic();
+
+        if (action === "posts") {
+          selectedPostVariantIndex = variantIndex;
+          renderReadyPosts(topic, variantIndex);
+        }
+      });
+
+      topicInput.addEventListener("input", () => {
+        if (!activeAction) return;
+        const topic = getTopic();
+
+        if (activeAction === "plan") render("Контент-план на неделю", generatePlan(topic));
+        if (activeAction === "stories") render("3 идеи сторис", generateStories(topic));
+        if (activeAction === "posts") {
+          render("3 варианта постов (нажмите на вариант, чтобы получить 3 готовых поста)", generatePosts(topic), {
+            clickable: true,
+            action: "posts",
+          });
+          if (selectedPostVariantIndex != null) renderReadyPosts(topic, selectedPostVariantIndex);
+        }
+      });
+
+      topicInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const active = buttons.find((b) => b.getAttribute("aria-pressed") === "true");
+          handleAction(active?.dataset.action || "plan");
+        }
+      });
+    </script>
   </body>
 </html>
