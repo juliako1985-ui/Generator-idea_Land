@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Генератор идей для земельного специалиста</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b1020;
+        --card: rgba(255, 255, 255, 0.08);
+        --text: #eef2ff;
+        --muted: rgba(238, 242, 255, 0.72);
+        --accent: #7c3aed;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        background: radial-gradient(1000px 700px at 15% 10%, rgba(124, 58, 237, 0.35), transparent 60%),
+          radial-gradient(900px 700px at 85% 20%, rgba(59, 130, 246, 0.25), transparent 60%),
+          var(--bg);
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 40px 16px;
+      }
+
+      main {
+        width: min(860px, 100%);
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(8px);
+      }
+
+      h1 {
+        font-size: clamp(24px, 3vw, 36px);
+        line-height: 1.15;
+        margin: 0 0 14px;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0 0 18px;
+        color: var(--muted);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+        display: grid;
+        gap: 10px;
+      }
+
+      li {
+        line-height: 1.5;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(124, 58, 237, 0.18);
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        color: var(--text);
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <div class="badge">Идеи для контента</div>
+        <h1>Генератор идей для земельного специалиста</h1>
+        <p>Выберите, что нужно сгенерировать:</p>
+        <ul>
+          <li>Контент-план на неделю</li>
+          <li>3 варианта постов по заданной теме</li>
+          <li>3 идеи сторис на заданную тему</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
